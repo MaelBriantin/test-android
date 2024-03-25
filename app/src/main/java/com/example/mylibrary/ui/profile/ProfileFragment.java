@@ -10,11 +10,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.mylibrary.MainActivity;
+import com.example.mylibrary.classes.User;
 import com.example.mylibrary.databinding.FragmentProfileBinding;
 
 public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
+    private MainActivity mainActivity;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -24,8 +27,11 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textNotifications;
-        notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        User user = mainActivity.user;
+
+        final TextView textView = binding.username;
+        textView.setText(mainActivity.user.GetName());
+        // notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

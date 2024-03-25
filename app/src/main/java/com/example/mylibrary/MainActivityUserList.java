@@ -2,11 +2,16 @@ package com.example.mylibrary;
 
 import android.os.Bundle;
 
+import com.example.mylibrary.classes.User;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -15,10 +20,17 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.mylibrary.databinding.ActivityMainUserListBinding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivityUserList extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainUserListBinding binding;
+
+    private List<User> users;
+
+    private User selectedUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,24 +41,24 @@ public class MainActivityUserList extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main_activity_user_list);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+//        users = new ArrayList<>();
+//        User user1 = new User("user1", "", "", null, null);
+//        User user2 = new User("user2", "", "", null, null);
+//        User user3 = new User("user3", "", "", null, null);
+//        users.add(user1);
+//        users.add(user2);
+//        users.add(user3);
+//        ListView usersListView = findViewById(R.id.list_view);
+//
+//        ArrayAdapter<User> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, users);
+//        usersListView.setAdapter(adapter);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
-            }
-        });
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main_activity_user_list);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+//        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                selectedUser = users.get(position);
+//                Log.i("user", selectedUser.GetName());
+//            }
+//        });
     }
 }

@@ -1,19 +1,32 @@
 package com.example.mylibrary;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.mylibrary.classes.User;
+import com.example.mylibrary.databinding.ActivityMainUserListBinding;
 import com.example.mylibrary.databinding.FragmentFirstBinding;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
+    private List<User> users;
+    private User selectedUser;
 
     @Override
     public View onCreateView(
@@ -29,10 +42,33 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonFirst.setOnClickListener(v ->
+        users = new ArrayList<>();
+        User user1 = new User("user1", "", "", null, null);
+        User user2 = new User("user2", "", "", null, null);
+        User user3 = new User("user3", "", "", null, null);
+        users.add(user1);
+        users.add(user2);
+        users.add(user3);
+        ListView usersListView = view.findViewById(R.id.list_view);
+
+        ArrayAdapter<User> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, users);
+        usersListView.setAdapter(adapter);
+        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedUser = users.get(position);
+
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("selectedUser", selectedUser);
+                startActivity(intent);
+            }
+        });
+
+        binding.newUserButton.setOnClickListener(v ->
                 NavHostFragment.findNavController(FirstFragment.this)
                         .navigate(R.id.action_FirstFragment_to_SecondFragment)
         );
+
     }
 
     @Override
