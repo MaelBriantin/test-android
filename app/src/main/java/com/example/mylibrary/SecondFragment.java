@@ -16,6 +16,11 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.mylibrary.models.User;
 import com.example.mylibrary.databinding.FragmentSecondBinding;
+import com.example.mylibrary.persistence.AppDatabase;
+import com.example.mylibrary.persistence.repositories.UserRepository;
+import com.example.mylibrary.repositories.UserRepositoryInterface;
+
+import java.util.concurrent.Executors;
 
 public class SecondFragment extends Fragment {
 
@@ -23,7 +28,7 @@ public class SecondFragment extends Fragment {
 
     private User selectedUser;
     private MainActivityUserList mainActivityUserList;
-
+    private String userEmoticon;
 
     @Override
     public View onCreateView(
@@ -51,8 +56,7 @@ public class SecondFragment extends Fragment {
         emoticonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedEmoticon = (String) parent.getItemAtPosition(position);
-//                selectedUser.SetAvatar(selectedEmoticon);
+                userEmoticon = (String) parent.getItemAtPosition(position);
             }
 
             @Override
@@ -64,6 +68,19 @@ public class SecondFragment extends Fragment {
                 NavHostFragment.findNavController(SecondFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
         );
+
+        binding.saveButton.setOnClickListener(v -> {
+            selectedUser.setName(binding.newUserName.getText().toString());
+            selectedUser.setEmail(binding.newUserEmail.getText().toString());
+            selectedUser.setPassword(binding.newUserPassword.getText().toString());
+            selectedUser.setAvatar(userEmoticon);
+
+            Executors.newSingleThreadExecutor().execute(() -> {
+                AppDatabase db = AppDatabase.getDatabase(requireContext());
+                UserRepositoryInterface userRepository = new UserRepository(db.userDao());
+                userRepository.insertUser(selectedUser);
+            });
+        });
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.mylibrary.persistence.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -11,10 +12,12 @@ import com.example.mylibrary.models.UserWithLibrary;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 @Dao
 public interface UserDao {
     @Query("SELECT * FROM user")
-    List<User> getAll();
+    Flowable<List<User>> getAll();
 
     @Transaction
     @Query("SELECT * FROM user")

@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -26,6 +27,10 @@ import com.example.mylibrary.databinding.ActivityMainUserListBinding;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivityUserList extends AppCompatActivity {
 
@@ -38,8 +43,11 @@ public class MainActivityUserList extends AppCompatActivity {
 
     public List<User> users;
 
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         Executors.newSingleThreadExecutor().execute(() -> {
@@ -52,8 +60,15 @@ public class MainActivityUserList extends AppCompatActivity {
             userRepository = new UserRepository(db.userDao());
 
             //userRepository.insertAll(user1, user2, user3);
-
-            users = userRepository.getAllUsers();
+            compositeDisposable.add(userRepository.getAllUsers()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(test -> {
+                        users = test;
+                        Log.d("MainActivityUserList", "Users: " + users);
+                    })
+            );
+            //users = userRepository.getAllUsers();
         });
 
         binding = ActivityMainUserListBinding.inflate(getLayoutInflater());
