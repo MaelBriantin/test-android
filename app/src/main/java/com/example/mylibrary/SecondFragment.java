@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.mylibrary.classes.User;
+import com.example.mylibrary.models.User;
 import com.example.mylibrary.databinding.FragmentSecondBinding;
 
 public class SecondFragment extends Fragment {
@@ -22,6 +22,8 @@ public class SecondFragment extends Fragment {
     private FragmentSecondBinding binding;
 
     private User selectedUser;
+    private MainActivityUserList mainActivityUserList;
+
 
     @Override
     public View onCreateView(
@@ -36,7 +38,9 @@ public class SecondFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        selectedUser = new User("", "", "", null, null);
+        mainActivityUserList = (MainActivityUserList) getActivity();
+
+        selectedUser = new User("", "", "", null);
 
         Spinner emoticonSpinner = view.findViewById(R.id.emoticon_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
@@ -48,7 +52,7 @@ public class SecondFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedEmoticon = (String) parent.getItemAtPosition(position);
-                selectedUser.SetAvatar(selectedEmoticon);
+//                selectedUser.SetAvatar(selectedEmoticon);
             }
 
             @Override
@@ -60,18 +64,6 @@ public class SecondFragment extends Fragment {
                 NavHostFragment.findNavController(SecondFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment)
         );
-
-        binding.saveButton.setOnClickListener(v -> {
-            selectedUser.SetInfo(
-                    binding.newUserName.getText().toString(),
-                    binding.newUserEmail.getText().toString(),
-                    binding.newUserPassword.getText().toString()
-            );
-
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            intent.putExtra("selectedUser", selectedUser);
-            startActivity(intent);
-        });
     }
 
     @Override

@@ -14,19 +14,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.mylibrary.classes.User;
 import com.example.mylibrary.databinding.ActivityMainUserListBinding;
 import com.example.mylibrary.databinding.FragmentFirstBinding;
+import com.example.mylibrary.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
 
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
     private List<User> users;
     private User selectedUser;
+
+    private MainActivityUserList mainActivityUserList;
 
     @Override
     public View onCreateView(
@@ -36,19 +39,15 @@ public class FirstFragment extends Fragment {
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        users = new ArrayList<>();
-        User user1 = new User("user1", "", "", null, null);
-        User user2 = new User("user2", "", "", null, null);
-        User user3 = new User("user3", "", "", null, null);
-        users.add(user1);
-        users.add(user2);
-        users.add(user3);
+        mainActivityUserList = (MainActivityUserList) getActivity();
+
+        users = mainActivityUserList.users;
+
         ListView usersListView = view.findViewById(R.id.list_view);
 
         ArrayAdapter<User> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, users);
@@ -59,7 +58,7 @@ public class FirstFragment extends Fragment {
                 selectedUser = users.get(position);
 
                 Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra("selectedUser", selectedUser);
+                intent.putExtra("selectedUserId", selectedUser.getId());
                 startActivity(intent);
             }
         });

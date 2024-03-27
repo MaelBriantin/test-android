@@ -28,3 +28,4 @@ annotation = { group = "androidx.annotation", name = "annotation", version.ref =
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 
+

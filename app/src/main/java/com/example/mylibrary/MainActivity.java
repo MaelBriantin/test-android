@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.mylibrary.classes.User;
 import com.example.mylibrary.databinding.ActivityMainUserListBinding;
+import com.example.mylibrary.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +16,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.mylibrary.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         user = (User) intent.getSerializableExtra("selectedUser");
 
         Bundle bundle = new Bundle();
-        bundle.putSerializable("selectedUser", user);
+        bundle.putSerializable("selectedUser", (Serializable) user);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
