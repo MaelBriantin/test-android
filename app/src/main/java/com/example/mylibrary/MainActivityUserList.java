@@ -41,7 +41,8 @@ public class MainActivityUserList extends AppCompatActivity {
 
     private User selectedUser;
 
-    public List<User> users;
+    public
+    ArrayList<User> users = new ArrayList<>();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -64,7 +65,7 @@ public class MainActivityUserList extends AppCompatActivity {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(test -> {
-                        users = test;
+                        users.addAll( test);
                         Log.d("MainActivityUserList", "Users: " + users);
                     })
             );
