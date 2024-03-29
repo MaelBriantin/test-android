@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.lifecycle.LiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -27,6 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class MainActivityUserList extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
@@ -36,25 +41,33 @@ public class MainActivityUserList extends AppCompatActivity {
 
     private User selectedUser;
 
-    public List<User> users;
+    public
+    ArrayList<User> users = new ArrayList<>();
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        Executors.newSingleThreadExecutor().execute(() -> {
-            AppDatabase db = AppDatabase.getDatabase(this);
+        super.onCreate(savedInstanceState);
 
             User user1 = new User("user1", "", "", "😀");
             User user2 = new User("user2", "", "", "😂");
             User user3 = new User("user3", "", "", "😁");
 
-            userRepository = new UserRepository(db.userDao());
+            userRepository = new UserRepository(this);
 
             //userRepository.insertAll(user1, user2, user3);
+            compositeDisposable.add(userRepository.getAllUsers()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(test -> {
+                        users.addAll( test);
+                        Log.d("MainActivityUserList", "Users: " + users);
+                    })
+            );
+            //users = userRepository.getAllUsers();
 
-            users = userRepository.getAllUsers();
-        });
 
         binding = ActivityMainUserListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
