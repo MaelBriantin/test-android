@@ -12,6 +12,7 @@ import com.example.mylibrary.models.UserWithLibrary;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 @Dao
 public interface UserDao {
@@ -31,7 +32,7 @@ public interface UserDao {
     List<Long> insertAll(User... users);
 
     @Insert
-    void insert(User user);
+    Single<Long> insert(User user);
 
     @Delete
     void delete(User user);

@@ -23,6 +23,10 @@ import com.example.mylibrary.repositories.UserRepositoryInterface;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class SecondFragment extends Fragment {
 
     private FragmentSecondBinding binding;
@@ -32,6 +36,7 @@ public class SecondFragment extends Fragment {
     private Long createdUser;
     private String userEmoticon;
 
+    private CompositeDisposable disposable = new CompositeDisposable();
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
@@ -77,18 +82,22 @@ public class SecondFragment extends Fragment {
             selectedUser.setPassword(binding.newUserPassword.getText().toString());
             selectedUser.setAvatar(userEmoticon);
 
-            Executors.newSingleThreadExecutor().execute(() -> {
-                AppDatabase db = AppDatabase.getDatabase(requireContext());
+            UserRepositoryInterface userRepository = new UserRepository(getContext());
 
-                UserRepositoryInterface userRepository = new UserRepository(getContext());
+            disposable.add(userRepository
+                    .insertUser(selectedUser)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            test -> {
+                                Log.i("TEEEEEEEEST", test.toString());
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                intent.putExtra("selectedUserId", test.toString());
+                                getActivity().startActivity(intent);
+                            }
 
-                Long userId = userRepository.insertUser(selectedUser).get(0);
+                    ));
 
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-
-                intent.putExtra("selectedUserId", userId);
-                startActivity(intent);
-            });
         });
     }
 

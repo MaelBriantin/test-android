@@ -10,6 +10,7 @@ import com.example.mylibrary.repositories.UserRepositoryInterface;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 
 public class UserRepository implements UserRepositoryInterface {
@@ -45,9 +46,9 @@ public class UserRepository implements UserRepositoryInterface {
         }
     }
 
-    public List<Long> insertUser(User user) {
-        List <Long> userId = userDao.insertAll(user);
-        return userId;
+    public Single<Long> insertUser(User user) {
+        return userDao.insert(user);
+
     }
     public void insertAll(User... users) {
         userDao.insertAll(users);
