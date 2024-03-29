@@ -26,6 +26,7 @@ import com.example.mylibrary.databinding.ActivityMainUserListBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -44,7 +45,22 @@ public class MainActivityUserList extends AppCompatActivity {
     public
     ArrayList<User> users = new ArrayList<>();
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    @Override
+    protected  void onStart() {
+        super.onStart();
+        userRepository = new UserRepository(this);
+        compositeDisposable.add(userRepository.getAllUsers()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(test -> {
+                    users.addAll( test);
+                    ListView usersListView = findViewById(R.id.list_view);
+                    ((ArrayAdapter) usersListView.getAdapter().notifyDataSetChanged());
+                })
+        );
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,17 +71,8 @@ public class MainActivityUserList extends AppCompatActivity {
             User user2 = new User("user2", "", "", "😂");
             User user3 = new User("user3", "", "", "😁");
 
-            userRepository = new UserRepository(this);
 
-            //userRepository.insertAll(user1, user2, user3);
-            compositeDisposable.add(userRepository.getAllUsers()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(test -> {
-                        users.addAll( test);
-                        Log.d("MainActivityUserList", "Users: " + users);
-                    })
-            );
+
             //users = userRepository.getAllUsers();
 
 

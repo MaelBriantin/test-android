@@ -20,6 +20,7 @@ import com.example.mylibrary.persistence.AppDatabase;
 import com.example.mylibrary.persistence.repositories.UserRepository;
 import com.example.mylibrary.repositories.UserRepositoryInterface;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 
 public class SecondFragment extends Fragment {
@@ -28,6 +29,7 @@ public class SecondFragment extends Fragment {
 
     private User selectedUser;
     private MainActivityUserList mainActivityUserList;
+    private Long createdUser;
     private String userEmoticon;
 
     @Override
@@ -77,8 +79,15 @@ public class SecondFragment extends Fragment {
 
             Executors.newSingleThreadExecutor().execute(() -> {
                 AppDatabase db = AppDatabase.getDatabase(requireContext());
+
                 UserRepositoryInterface userRepository = new UserRepository(getContext());
-                userRepository.insertUser(selectedUser);
+
+                Long userId = userRepository.insertUser(selectedUser).get(0);
+
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+
+                intent.putExtra("selectedUserId", userId);
+                startActivity(intent);
             });
         });
     }

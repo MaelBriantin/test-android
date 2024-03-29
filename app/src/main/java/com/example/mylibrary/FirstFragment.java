@@ -58,7 +58,9 @@ public class FirstFragment extends Fragment {
                 selectedUser = users.get(position);
 
                 Intent intent = new Intent(getActivity(), MainActivity.class);
+
                 intent.putExtra("selectedUserId", selectedUser.getId());
+
                 startActivity(intent);
             }
         });

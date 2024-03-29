@@ -2,8 +2,6 @@ package com.example.mylibrary.persistence.repositories;
 
 import android.content.Context;
 
-import androidx.lifecycle.LiveData;
-
 import com.example.mylibrary.models.User;
 import com.example.mylibrary.persistence.AppDatabase;
 import com.example.mylibrary.persistence.dao.UserDao;
@@ -29,11 +27,27 @@ public class UserRepository implements UserRepositoryInterface {
     }
 
     public User getUserById(int id) {
-        return userDao.getById(id);
+        int q = id;
+        try {
+            User test = userDao.getById(id);
+            return test;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public User getUserById(Long id) {
+        Long q = id;
+        try {
+            User test = userDao.getById(id);
+            return test;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    public void insertUser(User user) {
-        userDao.insertAll(user);
+    public List<Long> insertUser(User user) {
+        List <Long> userId = userDao.insertAll(user);
+        return userId;
     }
     public void insertAll(User... users) {
         userDao.insertAll(users);

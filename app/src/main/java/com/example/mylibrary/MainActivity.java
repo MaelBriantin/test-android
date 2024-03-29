@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.example.mylibrary.databinding.ActivityMainUserListBinding;
 import com.example.mylibrary.models.User;
+import com.example.mylibrary.repositories.UserRepositoryInterface;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,12 +19,15 @@ import com.example.mylibrary.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.Serializable;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    public Long userId;
     public User user;
+    public UserRepositoryInterface userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +36,11 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Intent intent = getIntent();
-        user = (User) intent.getSerializableExtra("selectedUser");
-
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("selectedUser", (Serializable) user);
+//        Executors.newSingleThreadExecutor().execute(() -> {
+            Intent intent = getIntent();
+            userId = (Long) intent.getLongExtra("selectedUserId", 0);
+            user = userRepository.getUserById(userId);
+//        });
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(

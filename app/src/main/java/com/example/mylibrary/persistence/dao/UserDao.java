@@ -1,6 +1,5 @@
 package com.example.mylibrary.persistence.dao;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -25,9 +24,11 @@ public interface UserDao {
 
     @Query("SELECT * FROM user WHERE id = :id")
     User getById(int id);
+    @Query("SELECT * FROM user WHERE id = :id")
+    User getById(Long id);
 
     @Insert
-    void insertAll(User... users);
+    List<Long> insertAll(User... users);
 
     @Insert
     void insert(User user);
