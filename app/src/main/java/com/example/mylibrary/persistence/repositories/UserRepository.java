@@ -1,8 +1,11 @@
 package com.example.mylibrary.persistence.repositories;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 
 import com.example.mylibrary.models.User;
+import com.example.mylibrary.persistence.AppDatabase;
 import com.example.mylibrary.persistence.dao.UserDao;
 import com.example.mylibrary.repositories.UserRepositoryInterface;
 
@@ -14,8 +17,11 @@ import io.reactivex.Flowable;
 public class UserRepository implements UserRepositoryInterface {
     private final UserDao userDao;
 
-    public UserRepository(UserDao userDao) {
-        this.userDao = userDao;
+
+    public UserRepository(Context context) {
+        this.userDao =  AppDatabase
+                .getDatabase(context)
+                .userDao();
     }
 
     public Flowable<List<User>> getAllUsers() {

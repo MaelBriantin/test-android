@@ -77,7 +77,7 @@ public class SecondFragment extends Fragment {
 
             Executors.newSingleThreadExecutor().execute(() -> {
                 AppDatabase db = AppDatabase.getDatabase(requireContext());
-                UserRepositoryInterface userRepository = new UserRepository(db.userDao());
+                UserRepositoryInterface userRepository = new UserRepository(getContext());
                 userRepository.insertUser(selectedUser);
             });
         });

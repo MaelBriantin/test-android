@@ -51,14 +51,11 @@ public class MainActivityUserList extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        Executors.newSingleThreadExecutor().execute(() -> {
-            AppDatabase db = AppDatabase.getDatabase(this);
-
             User user1 = new User("user1", "", "", "😀");
             User user2 = new User("user2", "", "", "😂");
             User user3 = new User("user3", "", "", "😁");
 
-            userRepository = new UserRepository(db.userDao());
+            userRepository = new UserRepository(this);
 
             //userRepository.insertAll(user1, user2, user3);
             compositeDisposable.add(userRepository.getAllUsers()
@@ -70,7 +67,7 @@ public class MainActivityUserList extends AppCompatActivity {
                     })
             );
             //users = userRepository.getAllUsers();
-        });
+
 
         binding = ActivityMainUserListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
