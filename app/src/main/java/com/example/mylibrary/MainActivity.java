@@ -2,11 +2,15 @@ package com.example.mylibrary;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.mylibrary.databinding.ActivityMainUserListBinding;
 import com.example.mylibrary.models.User;
+import com.example.mylibrary.persistence.repositories.UserRepository;
 import com.example.mylibrary.repositories.UserRepositoryInterface;
+import com.example.mylibrary.viewmodel.MainActivityViewModel;
+import com.example.mylibrary.viewmodel.ViewModelFactory;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,13 +25,17 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.Serializable;
 import java.util.concurrent.Executors;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-
-    public Long userId;
-    public User user;
+    private MainActivityViewModel viewModel;
     public UserRepositoryInterface userRepository;
+    private CompositeDisposable _mDisposable = new CompositeDisposable();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +43,18 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        viewModel = ViewModelFactory.getInstance(this).create(MainActivityViewModel.class);
+        userRepository = new UserRepository(this);
 
-//        Executors.newSingleThreadExecutor().execute(() -> {
-            Intent intent = getIntent();
-            userId = (Long) intent.getLongExtra("selectedUserId", 0);
-            user = userRepository.getUserById(userId);
-//        });
+        Intent intent = getIntent();
+        Long userId =  Long.valueOf( intent.getLongExtra("selectedUserId", Long.valueOf(0)));
+
+       _mDisposable.add( viewModel.loadUser(userId)
+                       .subscribeOn(Schedulers.io())
+                       .observeOn(AndroidSchedulers.mainThread())
+                       .subscribe(user -> { Log.i("DATA", user.getName()); },
+                                throwable -> { Log.e("DATA", throwable.getMessage());})
+       );
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(

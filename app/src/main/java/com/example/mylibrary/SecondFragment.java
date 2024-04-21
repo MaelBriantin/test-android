@@ -92,7 +92,7 @@ public class SecondFragment extends Fragment {
                             test -> {
                                 Log.i("TEEEEEEEEST", test.toString());
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
-                                intent.putExtra("selectedUserId", test.toString());
+                                intent.putExtra("selectedUserId", test);
                                 getActivity().startActivity(intent);
                             }
 
