@@ -28,9 +28,9 @@ public class MainActivityViewModel extends ViewModel {
 
     public Maybe<User> loadUser(Long id) {
        return userRepository.getUserById(id).map(user -> {
-            currentUser.postValue(user);
-            Log.i("DATA", "Success");
-            return user;
-        });
+           currentUser.postValue(user);
+           Log.i("DATA", "Success");
+           return user;
+       });
     }
 }

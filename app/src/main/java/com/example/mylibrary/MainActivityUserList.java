@@ -14,6 +14,9 @@ import com.example.mylibrary.databinding.ActivityMainUserListBinding;
 import com.example.mylibrary.models.User;
 import com.example.mylibrary.persistence.repositories.UserRepository;
 import com.example.mylibrary.repositories.UserRepositoryInterface;
+import com.example.mylibrary.viewmodel.MainActivityViewModel;
+import com.example.mylibrary.viewmodel.UserListViewModel;
+import com.example.mylibrary.viewmodel.ViewModelFactory;
 
 import java.util.ArrayList;
 
@@ -25,6 +28,9 @@ public class MainActivityUserList extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainUserListBinding binding;
+
+    private UserListViewModel viewModel;
+    private CompositeDisposable _userListDisposable = new CompositeDisposable();
 
     private UserRepositoryInterface userRepository;
 
@@ -41,6 +47,7 @@ public class MainActivityUserList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainUserListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        viewModel = ViewModelFactory.getInstance(this).create(UserListViewModel.class);
 
         ArrayAdapter<User> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, users);
         binding.listView.setAdapter(adapter);
@@ -63,13 +70,16 @@ public class MainActivityUserList extends AppCompatActivity {
         super.onStart();
         userRepository = new UserRepository(this);
         compositeDisposable.add(userRepository.getAllUsers()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(userList -> {
-                    users.addAll(userList);
-                    ListView usersListView = findViewById(R.id.list_view);
-                    ((ArrayAdapter) usersListView.getAdapter()).notifyDataSetChanged();
-                })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(userList -> {
+                users.clear();
+                users.addAll(userList);
+                ListView usersListView = findViewById(R.id.list_view);
+                ((ArrayAdapter) usersListView.getAdapter()).notifyDataSetChanged();
+            })
         );
+
+
     }
 }

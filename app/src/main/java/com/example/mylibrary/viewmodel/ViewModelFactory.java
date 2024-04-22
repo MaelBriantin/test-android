@@ -27,12 +27,18 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         _userRepository = new UserRepository(context);
     }
 
+
     @Override
     @NonNull
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if(modelClass.isAssignableFrom(MainActivityViewModel.class)) {
             return (T) new MainActivityViewModel(_userRepository);
         }
+        if(modelClass.isAssignableFrom(UserListViewModel.class)) {
+            UserListViewModel viewModel = new UserListViewModel(_userRepository);
+            return modelClass.cast(viewModel);
+        }
         throw new IllegalArgumentException("Unknown ViewModelClass");
     }
+
 }
