@@ -13,6 +13,8 @@ import com.example.mylibrary.models.UserWithLibrary;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 @Dao
 public interface UserDao {
@@ -24,13 +26,13 @@ public interface UserDao {
     List<UserWithLibrary> getUsersWithLibrary();
 
     @Query("SELECT * FROM user WHERE id = :id")
-    User getById(int id);
+    Maybe<User> getById(Long id);
 
     @Insert
-    void insertAll(User... users);
+    List<Long> insertAll(User... users);
 
     @Insert
-    void insert(User user);
+    Single<Long> insert(User user);
 
     @Delete
     void delete(User user);

@@ -11,7 +11,10 @@ import com.example.mylibrary.repositories.UserRepositoryInterface;
 
 import java.util.List;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 
 public class UserRepository implements UserRepositoryInterface {
@@ -28,12 +31,13 @@ public class UserRepository implements UserRepositoryInterface {
         return userDao.getAll();
     }
 
-    public User getUserById(int id) {
+    public Maybe<User> getUserById(Long id) {
         return userDao.getById(id);
     }
 
-    public void insertUser(User user) {
-        userDao.insertAll(user);
+    public Single<Long> insertUser(User user) {
+        return userDao.insert(user);
+
     }
     public void insertAll(User... users) {
         userDao.insertAll(users);

@@ -29,10 +29,10 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        User user = mainActivity.user;
+//        User user = mainActivity.user;
 
-        final TextView textView = binding.username;
-//        textView.setText(mainActivity.user.GetName());
+        TextView textView = binding.username;
+//        textView.setText(mainActivity.user.getName());
         // notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

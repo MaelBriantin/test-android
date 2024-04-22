@@ -20,7 +20,12 @@ import com.example.mylibrary.persistence.AppDatabase;
 import com.example.mylibrary.persistence.repositories.UserRepository;
 import com.example.mylibrary.repositories.UserRepositoryInterface;
 
+import java.util.List;
 import java.util.concurrent.Executors;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SecondFragment extends Fragment {
 
@@ -28,8 +33,10 @@ public class SecondFragment extends Fragment {
 
     private User selectedUser;
     private MainActivityUserList mainActivityUserList;
+    private Long createdUser;
     private String userEmoticon;
 
+    private CompositeDisposable disposable = new CompositeDisposable();
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
@@ -75,11 +82,22 @@ public class SecondFragment extends Fragment {
             selectedUser.setPassword(binding.newUserPassword.getText().toString());
             selectedUser.setAvatar(userEmoticon);
 
-            Executors.newSingleThreadExecutor().execute(() -> {
-                AppDatabase db = AppDatabase.getDatabase(requireContext());
-                UserRepositoryInterface userRepository = new UserRepository(getContext());
-                userRepository.insertUser(selectedUser);
-            });
+            UserRepositoryInterface userRepository = new UserRepository(getContext());
+
+            disposable.add(userRepository
+                    .insertUser(selectedUser)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            test -> {
+                                Log.i("TEEEEEEEEST", test.toString());
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                intent.putExtra("selectedUserId", test);
+                                getActivity().startActivity(intent);
+                            }
+
+                    ));
+
         });
     }
 
