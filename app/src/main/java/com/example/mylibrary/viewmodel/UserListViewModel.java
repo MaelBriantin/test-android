@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 public class UserListViewModel extends ViewModel {
 
@@ -30,6 +31,10 @@ public class UserListViewModel extends ViewModel {
             allUsers.postValue(new ArrayList<>(users));
             return new ArrayList<>(users);
         });
+    }
+
+    public Single<Long> insertUser(User user) {
+        return userRepository.insertUser(user);
     }
 
 }

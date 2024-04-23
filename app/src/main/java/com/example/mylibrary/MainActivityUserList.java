@@ -20,6 +20,7 @@ import com.example.mylibrary.viewmodel.ViewModelFactory;
 
 import java.util.ArrayList;
 
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -30,7 +31,6 @@ public class MainActivityUserList extends AppCompatActivity {
     private ActivityMainUserListBinding binding;
 
     private UserListViewModel viewModel;
-    private CompositeDisposable _userListDisposable = new CompositeDisposable();
 
     private UserRepositoryInterface userRepository;
 
@@ -64,6 +64,38 @@ public class MainActivityUserList extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        binding.createUserDialog.setVisibility(View.GONE);
+
+        binding.newUserButton.setOnClickListener(v -> {
+            binding.createUserDialog.setVisibility(View.VISIBLE);
+        });
+
+        binding.cancelButton.setOnClickListener(v -> {
+            binding.createUserDialog.setVisibility(View.GONE);
+        });
+
+
+
+        binding.saveButton.setOnClickListener(v -> {
+            User user = new User(
+                binding.newUserName.getText().toString(),
+                binding.newUserEmail.getText().toString(),
+                binding.newUserPassword.getText().toString(),
+                    "😀"
+            );
+            compositeDisposable.add(viewModel.insertUser(user)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    user_id -> {
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.putExtra("selectedUserId", user_id);
+                        startActivity(intent);
+                    }
+                )
+            );
+        });
     }
     @Override
     protected  void onStart() {
@@ -79,7 +111,5 @@ public class MainActivityUserList extends AppCompatActivity {
                 ((ArrayAdapter) usersListView.getAdapter()).notifyDataSetChanged();
             })
         );
-
-
     }
 }
