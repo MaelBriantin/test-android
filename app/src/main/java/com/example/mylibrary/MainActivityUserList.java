@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -29,6 +30,8 @@ public class MainActivityUserList extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainUserListBinding binding;
+    private ListView listView;
+    private ArrayAdapter<User> adapter;
 
     private UserListViewModel viewModel;
 
@@ -72,17 +75,18 @@ public class MainActivityUserList extends AppCompatActivity {
         });
 
         binding.cancelButton.setOnClickListener(v -> {
+            binding.newUserName.setText("");
+            binding.newUserEmail.setText("");
+            binding.newUserPassword.setText("");
             binding.createUserDialog.setVisibility(View.GONE);
         });
-
-
 
         binding.saveButton.setOnClickListener(v -> {
             User user = new User(
                 binding.newUserName.getText().toString(),
                 binding.newUserEmail.getText().toString(),
                 binding.newUserPassword.getText().toString(),
-                    "😀"
+                binding.emoticonSpinner.getSelectedItem().toString()
             );
             compositeDisposable.add(viewModel.insertUser(user)
                 .subscribeOn(Schedulers.io())
@@ -92,6 +96,10 @@ public class MainActivityUserList extends AppCompatActivity {
                         Intent intent = new Intent(this, MainActivity.class);
                         intent.putExtra("selectedUserId", user_id);
                         startActivity(intent);
+                        binding.createUserDialog.setVisibility(View.GONE);
+                        binding.newUserName.setText("");
+                        binding.newUserEmail.setText("");
+                        binding.newUserPassword.setText("");
                     }
                 )
             );
@@ -100,6 +108,12 @@ public class MainActivityUserList extends AppCompatActivity {
     @Override
     protected  void onStart() {
         super.onStart();
+
+        Spinner spinner = findViewById(R.id.emoticon_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.emoticons, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
         userRepository = new UserRepository(this);
         compositeDisposable.add(userRepository.getAllUsers()
             .subscribeOn(Schedulers.io())
