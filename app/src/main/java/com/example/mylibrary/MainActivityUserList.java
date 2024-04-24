@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import androidx.appcompat.app.AlertDialog;
+import android.content.DialogInterface;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.ui.AppBarConfiguration;
 
@@ -39,8 +42,7 @@ public class MainActivityUserList extends AppCompatActivity {
 
     private User selectedUser;
 
-    public
-    ArrayList<User> users = new ArrayList<>();
+    public ArrayList<User> users = new ArrayList<>();
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -59,71 +61,85 @@ public class MainActivityUserList extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedUser = users.get(position);
-
                 Intent intent = new Intent(view.getContext(), MainActivity.class);
 
-                intent.putExtra("selectedUserId", (long) selectedUser.getId());
+                long userId = (long) selectedUser.getId();
 
+                intent.putExtra("userId", (long) userId);
                 startActivity(intent);
             }
         });
 
-        binding.createUserDialog.setVisibility(View.GONE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Create New User");
 
-        binding.newUserButton.setOnClickListener(v -> {
-            binding.createUserDialog.setVisibility(View.VISIBLE);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_view, null);
+
+        EditText newUserName = dialogView.findViewById(R.id.dialog_name);
+        EditText newUserEmail = dialogView.findViewById(R.id.dialog_email);
+        EditText newUserPassword = dialogView.findViewById(R.id.dialog_password);
+        Spinner emoticonSpinner = dialogView.findViewById(R.id.dialog_emoticon_spinner);
+
+        ArrayAdapter<CharSequence> emoticonAdapter = ArrayAdapter.createFromResource(this, R.array.emoticons, android.R.layout.simple_spinner_item);
+        emoticonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        emoticonSpinner.setAdapter(emoticonAdapter);
+
+        builder.setView(dialogView);
+
+        binding.newUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                builder.show();
+            }
         });
 
-        binding.cancelButton.setOnClickListener(v -> {
-            binding.newUserName.setText("");
-            binding.newUserEmail.setText("");
-            binding.newUserPassword.setText("");
-            binding.createUserDialog.setVisibility(View.GONE);
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                User user = new User(
+                        newUserName.getText().toString(),
+                        newUserEmail.getText().toString(),
+                        newUserPassword.getText().toString(),
+                        emoticonSpinner.getSelectedItem().toString()
+                );
+                compositeDisposable.add(viewModel.insertUser(user)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                user_id -> {
+                                    Intent intent = new Intent(MainActivityUserList.this, MainActivity.class);
+                                    intent.putExtra("userId", user_id);
+                                    startActivity(intent);
+                                    newUserName.setText("");
+                                    newUserEmail.setText("");
+                                    newUserPassword.setText("");
+                                }
+                        )
+                );
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
         });
 
-        binding.saveButton.setOnClickListener(v -> {
-            User user = new User(
-                binding.newUserName.getText().toString(),
-                binding.newUserEmail.getText().toString(),
-                binding.newUserPassword.getText().toString(),
-                binding.emoticonSpinner.getSelectedItem().toString()
-            );
-            compositeDisposable.add(viewModel.insertUser(user)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    user_id -> {
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.putExtra("selectedUserId", user_id);
-                        startActivity(intent);
-                        binding.createUserDialog.setVisibility(View.GONE);
-                        binding.newUserName.setText("");
-                        binding.newUserEmail.setText("");
-                        binding.newUserPassword.setText("");
-                    }
-                )
-            );
-        });
+        AlertDialog dialog = builder.create();
+
     }
     @Override
     protected  void onStart() {
         super.onStart();
 
-        Spinner spinner = findViewById(R.id.emoticon_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.emoticons, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
         userRepository = new UserRepository(this);
         compositeDisposable.add(userRepository.getAllUsers()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(userList -> {
-                users.clear();
-                users.addAll(userList);
-                ListView usersListView = findViewById(R.id.list_view);
-                ((ArrayAdapter) usersListView.getAdapter()).notifyDataSetChanged();
-            })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userList -> {
+                    users.clear();
+                    users.addAll(userList);
+                    ListView usersListView = binding.listView;
+                    ((ArrayAdapter) usersListView.getAdapter()).notifyDataSetChanged();
+                })
         );
     }
 }
