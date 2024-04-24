@@ -6,12 +6,14 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.example.mylibrary.models.User;
 import com.example.mylibrary.models.UserWithLibrary;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -34,6 +36,9 @@ public interface UserDao {
     @Insert
     Single<Long> insert(User user);
 
+    @Update
+    Completable update(User user);
+
     @Delete
-    void delete(User user);
+    Completable delete(User user);
 }

@@ -23,6 +23,7 @@ import com.example.mylibrary.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -32,10 +33,10 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private MainActivityViewModel viewModel;
+    public MainActivityViewModel viewModel;
     public UserRepositoryInterface userRepository;
-    private CompositeDisposable _mDisposable = new CompositeDisposable();
-
+    public CompositeDisposable _mDisposable = new CompositeDisposable();
+    public User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +48,17 @@ public class MainActivity extends AppCompatActivity {
         userRepository = new UserRepository(this);
 
         Intent intent = getIntent();
-        Long userId =  Long.valueOf( intent.getLongExtra("selectedUserId", Long.valueOf(0)));
+        Long userId =  Objects.requireNonNull(intent.getExtras()).getLong("userId");
 
        _mDisposable.add( viewModel.loadUser(userId)
                        .subscribeOn(Schedulers.io())
                        .observeOn(AndroidSchedulers.mainThread())
-                       .subscribe(user -> { Log.i("DATA", user.getName()); },
-                                throwable -> { Log.e("DATA", throwable.getMessage());})
+                       .subscribe(user -> {
+                           this.user = user;
+//                           Snackbar.make(binding.getRoot(), "User loaded", Snackbar.LENGTH_SHORT).show();
+                       }, throwable -> {
+                           Snackbar.make(binding.getRoot(), "Error loading user", Snackbar.LENGTH_SHORT).show();
+                       })
        );
 
         BottomNavigationView navView = findViewById(R.id.nav_view);

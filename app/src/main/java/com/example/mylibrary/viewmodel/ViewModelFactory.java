@@ -2,6 +2,8 @@ package com.example.mylibrary.viewmodel;
 
 import com.example.mylibrary.persistence.repositories.UserRepository;
 import com.example.mylibrary.repositories.UserRepositoryInterface;
+import com.example.mylibrary.ui.profile.ProfileViewModel;
+
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -37,6 +39,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         if(modelClass.isAssignableFrom(UserListViewModel.class)) {
             UserListViewModel viewModel = new UserListViewModel(_userRepository);
             return modelClass.cast(viewModel);
+        }
+        if(modelClass.isAssignableFrom(ProfileViewModel.class)) {
+            return (T) new ProfileViewModel(_userRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModelClass");
     }

@@ -22,15 +22,20 @@
     <string name="save_and_access_to_library">Save and access to library</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="enter_your_email">Enter your email</string>
+    <string name="enter_your_new_name">Enter your new name</string>
+    <string name="enter_your_new_email">Enter your new email</string>
     <string name="enter_your_password">Enter your password</string>
-        <string-array name="emoticons">
-            <item>😀</item>
-            <item>😃</item>
-            <item>😄</item>
-            <item>😁</item>
-            <item>😆</item>
-            <item>😅</item>
-            <item>😂</item>
-            <item>🤣</item>
-        </string-array>
+    <string name="enter_your_new_password">Enter your new password</string>
+    <string name="save">Save</string>
+    <string name="delete_account">Delete account</string>
+    <string-array name="emoticons">
+        <item>😀</item>
+        <item>😃</item>
+        <item>😄</item>
+        <item>😁</item>
+        <item>😆</item>
+        <item>😅</item>
+        <item>😂</item>
+        <item>🤣</item>
+    </string-array>
 </resources>

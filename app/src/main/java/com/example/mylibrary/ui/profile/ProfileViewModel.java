@@ -1,19 +1,22 @@
 package com.example.mylibrary.ui.profile;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.example.mylibrary.models.User;
+import com.example.mylibrary.repositories.UserRepositoryInterface;
+
+import io.reactivex.Maybe;
 
 public class ProfileViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final UserRepositoryInterface userRepository;
 
-    public ProfileViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("User profile");
+
+    public ProfileViewModel(UserRepositoryInterface userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public Maybe<User> getUserById(Long id) {
+        return userRepository.getUserById(id);
     }
 }

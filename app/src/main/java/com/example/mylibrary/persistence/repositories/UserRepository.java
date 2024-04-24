@@ -12,6 +12,7 @@ import com.example.mylibrary.repositories.UserRepositoryInterface;
 import java.util.List;
 
 import io.reactivex.BackpressureStrategy;
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -43,7 +44,11 @@ public class UserRepository implements UserRepositoryInterface {
         userDao.insertAll(users);
     }
 
-    public void deleteUser(User user) {
-        userDao.delete(user);
+    public Completable updateUser(User user) {
+        return userDao.update(user);
+    }
+
+    public Completable deleteUser(User user) {
+        return userDao.delete(user);
     }
 }
