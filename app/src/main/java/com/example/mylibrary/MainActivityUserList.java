@@ -31,10 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivityUserList extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
     private ActivityMainUserListBinding binding;
-    private ListView listView;
-    private ArrayAdapter<User> adapter;
 
     private UserListViewModel viewModel;
 
@@ -122,8 +119,6 @@ public class MainActivityUserList extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-
-        AlertDialog dialog = builder.create();
 
     }
     @Override

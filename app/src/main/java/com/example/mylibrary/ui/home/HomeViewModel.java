@@ -15,6 +15,7 @@ import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 public class HomeViewModel extends ViewModel {
 
@@ -36,6 +37,10 @@ public class HomeViewModel extends ViewModel {
             allUserBooks.postValue(new ArrayList<>(books));
             return new ArrayList<>(books);
         });
+    }
+
+    public Single<Long> insertBook(Book book, int userId) {
+        return bookRepository.insertBook(book, userId);
     }
 
     public LiveData<String> getText() {

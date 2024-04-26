@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp"
+        android:gravity="center"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp">
 
@@ -35,9 +36,7 @@
             android:id="@+id/dialog_emoticon_spinner"
             android:layout_width="92dp"
             android:layout_height="56dp"
-            android:layout_marginStart="40dp"
             android:layout_marginTop="16dp" />
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

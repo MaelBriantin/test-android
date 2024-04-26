@@ -22,8 +22,6 @@ public class ProfileFragment extends Fragment {
 
     private FragmentProfileBinding binding;
     private MainActivity mainActivity;
-    private Intent intent;
-
     private static final Class<com.example.mylibrary.MainActivityUserList> MainActivityUserList = MainActivityUserList.class;
 
     private User userProfile;
@@ -64,8 +62,9 @@ public class ProfileFragment extends Fragment {
                         .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                         .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())
                         .subscribe(() -> {
-                            Snackbar.make(binding.getRoot(), "User updated", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(binding.getRoot(), "User updated", Snackbar.ANIMATION_MODE_FADE).show();
                         }));
+
             }
         });
 

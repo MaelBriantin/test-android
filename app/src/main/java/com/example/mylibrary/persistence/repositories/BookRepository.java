@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 public class BookRepository implements BookRepositoryInterface {
 
@@ -23,5 +24,9 @@ public class BookRepository implements BookRepositoryInterface {
     }
     public Flowable<List<Book>> getAllUserBooks(int id) {
         return bookDao.getAllUserBooks(id);
+    }
+
+    public Single<Long> insertBook(Book book, int userId) {
+        return bookDao.insertBook(book.getTitle(), book.getAuthor(), book.getDescription(), userId);
     }
 }
