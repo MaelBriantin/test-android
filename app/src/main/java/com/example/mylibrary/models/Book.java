@@ -1,5 +1,6 @@
 package com.example.mylibrary.models;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -69,6 +70,12 @@ public class Book {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.getTitle();
     }
 }
 

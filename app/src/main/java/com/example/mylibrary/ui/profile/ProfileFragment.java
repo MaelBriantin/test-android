@@ -2,21 +2,17 @@ package com.example.mylibrary.ui.profile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.example.mylibrary.MainActivity;
-import com.example.mylibrary.MainActivityUserList;
+import com.example.mylibrary.*;
 import com.example.mylibrary.R;
 import com.example.mylibrary.models.User;
 import com.example.mylibrary.databinding.FragmentProfileBinding;
@@ -28,7 +24,7 @@ public class ProfileFragment extends Fragment {
     private MainActivity mainActivity;
     private Intent intent;
 
-    private static final Class MainActivityUserList = MainActivityUserList.class;
+    private static final Class<com.example.mylibrary.MainActivityUserList> MainActivityUserList = MainActivityUserList.class;
 
     private User userProfile;
 
@@ -37,7 +33,8 @@ public class ProfileFragment extends Fragment {
 
         mainActivity = (MainActivity) getActivity();
 
-        userProfile = mainActivity.user;
+        assert mainActivity != null;
+        userProfile = mainActivity.viewModel.getCurrentUser().getValue();
 
         binding = FragmentProfileBinding.inflate(getLayoutInflater());
         View root = binding.getRoot();
@@ -62,7 +59,7 @@ public class ProfileFragment extends Fragment {
                 userProfile.setEmail(binding.newUserEmail.getText().toString());
                 userProfile.setPassword(binding.newUserPassword.getText().toString());
                 userProfile.setAvatar(spinner.getSelectedItem().toString());
-                mainActivity.user = userProfile;
+
                 mainActivity._mDisposable.add(mainActivity.userRepository.updateUser(userProfile)
                         .subscribeOn(io.reactivex.schedulers.Schedulers.io())
                         .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())

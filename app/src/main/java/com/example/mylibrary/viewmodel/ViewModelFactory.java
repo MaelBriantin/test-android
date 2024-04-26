@@ -1,7 +1,10 @@
 package com.example.mylibrary.viewmodel;
 
+import com.example.mylibrary.persistence.repositories.BookRepository;
 import com.example.mylibrary.persistence.repositories.UserRepository;
+import com.example.mylibrary.repositories.BookRepositoryInterface;
 import com.example.mylibrary.repositories.UserRepositoryInterface;
+import com.example.mylibrary.ui.home.HomeViewModel;
 import com.example.mylibrary.ui.profile.ProfileViewModel;
 
 import android.content.Context;
@@ -14,6 +17,7 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private static ViewModelFactory INSTANCE;
     private final UserRepositoryInterface _userRepository;
+    private final BookRepositoryInterface _bookRepository;
 
     public static ViewModelFactory getInstance(Context context) {
         if(INSTANCE == null) {
@@ -26,7 +30,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         return INSTANCE;
     }
     private ViewModelFactory(Context context) {
+
         _userRepository = new UserRepository(context);
+        _bookRepository = new BookRepository(context);
     }
 
 
@@ -42,6 +48,9 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
         }
         if(modelClass.isAssignableFrom(ProfileViewModel.class)) {
             return (T) new ProfileViewModel(_userRepository);
+        }
+        if(modelClass.isAssignableFrom(HomeViewModel.class)) {
+            return (T) new HomeViewModel(_bookRepository);
         }
         throw new IllegalArgumentException("Unknown ViewModelClass");
     }
